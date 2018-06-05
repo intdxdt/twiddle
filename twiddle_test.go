@@ -19,38 +19,38 @@ func TestTwiddle(t *testing.T) {
 			g.Assert(Sign(-100) == -1).IsTrue()
 			g.Assert(Sign(100) == 1).IsTrue()
 			g.Assert(Sign(0) == 0).IsTrue()
-			g.Assert(Sign(INT_MAX) == 1).IsTrue()
-			g.Assert(Sign(INT_MIN) == -1).IsTrue()
+			g.Assert(Sign(IntMax) == 1).IsTrue()
+			g.Assert(Sign(IntMin) == -1).IsTrue()
 		})
 
 		g.It("abs", func() {
 			g.Assert(Abs(0) == 0)
 			g.Assert(Abs(1) == 1)
 			g.Assert(Abs(-1) == 1)
-			g.Assert(Abs(INT_MAX) == INT_MAX)
-			g.Assert(Abs(-INT_MAX) == INT_MAX)
+			g.Assert(Abs(IntMax) == IntMax)
+			g.Assert(Abs(-IntMax) == IntMax)
 			//abs(-INT_MIN) -- overflow
 		})
 		g.It("min", func() {
 			g.Assert(Min(0, 0) == 0).IsTrue()
 			g.Assert(Min(-1, 1) == -1).IsTrue()
-			g.Assert(Min(INT_MAX, INT_MAX) == INT_MAX).IsTrue()
-			g.Assert(Min(INT_MIN, INT_MIN) == INT_MIN).IsTrue()
-			g.Assert(Min(INT_MAX, INT_MIN) == INT_MIN).IsTrue()
+			g.Assert(Min(IntMax, IntMax) == IntMax).IsTrue()
+			g.Assert(Min(IntMin, IntMin) == IntMin).IsTrue()
+			g.Assert(Min(IntMax, IntMin) == IntMin).IsTrue()
 		})
 
 		//    #[test]
 		g.It("max", func() {
 			g.Assert(Max(0, 0) == 0)
 			g.Assert(Max(-1, 1) == 1)
-			g.Assert(Max(INT_MAX, INT_MAX) == INT_MAX)
-			g.Assert(Max(INT_MIN, INT_MIN) == INT_MIN)
-			g.Assert(Max(INT_MAX, INT_MIN) == INT_MAX)
+			g.Assert(Max(IntMax, IntMax) == IntMax)
+			g.Assert(Max(IntMin, IntMin) == IntMin)
+			g.Assert(Max(IntMax, IntMin) == IntMax)
 		})
 		//
 		//    #[test]
 		g.It("is pow2", func() {
-			g.Assert(!IsPow2(0))
+			g.Assert(IsPow2(0)).IsFalse()
 			for i := 0; i < 31; i++ {
 				g.Assert(IsPow2(1 << uint32(i))).IsTrue()
 			}

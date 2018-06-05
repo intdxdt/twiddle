@@ -6,11 +6,12 @@ package twiddle
  *    http//graphics.stanford.edu/~seander/bithacks.html
  */
 
-const INT_BITS int32 = 32 //number of bits in an integer
-const INT_MAX int32 = 0x7fffffff
-const INT_MIN int32 = -1 << uint32(INT_BITS-1)
+const IntBits int32 = 32 //number of bits in an integer
+const IntMax int32 = 0x7fffffff
+const IntMin int32 = -1 << uint32(IntBits-1)
 
-var REVERSE_TABLE = [256]uint32{0, 128, 64, 192, 32, 160, 96, 224, 16, 144, 80, 208, 48,
+
+var ReverseTable = [256]uint32{0, 128, 64, 192, 32, 160, 96, 224, 16, 144, 80, 208, 48,
 	176, 112, 240, 8, 136, 72, 200, 40, 168, 104, 232, 24, 152, 88, 216, 56, 184, 120, 248, 4,
 	132, 68, 196, 36, 164, 100, 228, 20, 148, 84, 212, 52, 180, 116, 244, 12, 140, 76, 204, 44,
 	172, 108, 236, 28, 156, 92, 220, 60, 188, 124, 252, 2, 130, 66, 194, 34, 162, 98, 226, 18,
@@ -54,7 +55,7 @@ func Sign(v int32) int32 {
 
 //Computes absolute value of integer
 func Abs(v int32) int32 {
-	var mask = v >> uint32(INT_BITS-1)
+	var mask = v >> uint32(IntBits-1)
 	return (v ^ mask) - mask
 }
 
@@ -86,7 +87,6 @@ func Log2(v uint32) uint32 {
 	shift = buint32(v > 0x3)  << 1; v >>= shift; r |= shift
 	return r | (v >> 1)
 	//@formatter:on
-
 }
 
 //Computes log base 10 of v
@@ -222,10 +222,10 @@ func Parity(v int32) int32 {
 //Reverse bits in a 32 bit word
 func Reverse(v uint32) uint32 {
 	//@formatter:off
-	return (REVERSE_TABLE[usz(v & 0xff)] << 24) |
-		(REVERSE_TABLE[usz((v>>8)&0xff) ] << 16) |
-		(REVERSE_TABLE[usz((v>>16)&0xff) ] << 8) |
-		REVERSE_TABLE[usz((v>>24)&0xff) ]
+	return (ReverseTable[usz(v & 0xff)] << 24) |
+		(ReverseTable[usz((v>>8)&0xff) ] << 16) |
+		(ReverseTable[usz((v>>16)&0xff) ] << 8) |
+		ReverseTable[usz((v>>24)&0xff) ]
 	//@formatter:on
 }
 
