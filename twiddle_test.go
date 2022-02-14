@@ -1,10 +1,10 @@
 package twiddle
 
 import (
-	"testing"
-	"github.com/franela/goblin"
 	"fmt"
+	"github.com/franela/goblin"
 	"strings"
+	"testing"
 )
 
 func TestTwiddle(t *testing.T) {
