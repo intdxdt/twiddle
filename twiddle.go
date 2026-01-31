@@ -10,7 +10,6 @@ const IntBits int32 = 32 //number of bits in an integer
 const IntMax int32 = 0x7fffffff
 const IntMin int32 = -1 << uint32(IntBits-1)
 
-
 var ReverseTable = [256]uint32{0, 128, 64, 192, 32, 160, 96, 224, 16, 144, 80, 208, 48,
 	176, 112, 240, 8, 136, 72, 200, 40, 168, 104, 232, 24, 152, 88, 216, 56, 184, 120, 248, 4,
 	132, 68, 196, 36, 164, 100, 228, 20, 148, 84, 212, 52, 180, 116, 244, 12, 140, 76, 204, 44,
@@ -26,10 +25,10 @@ var ReverseTable = [256]uint32{0, 128, 64, 192, 32, 160, 96, 224, 16, 144, 80, 2
 	151, 87, 215, 55, 183, 119, 247, 15, 143, 79, 207, 47, 175, 111, 239, 31, 159, 95, 223, 63,
 	191, 127, 255}
 
-//not ~
+// not ~
 func not(v int32) int32 { return -(v + 1) }
 
-//bool to int32
+// bool to int32
 func bint32(b bool) int32 {
 	if b {
 		return 1
@@ -37,7 +36,7 @@ func bint32(b bool) int32 {
 	return 0
 }
 
-//bool to uint32
+// bool to uint32
 func buint32(b bool) uint32 {
 	if b {
 		return 1
@@ -45,15 +44,15 @@ func buint32(b bool) uint32 {
 	return 0
 }
 
-//uint32 to int
+// uint32 to int
 func usz(v uint32) int { return int(v) }
 
-//Returns -1, 0, +1 depending on sign of x
+// Returns -1, 0, +1 depending on sign of x
 func Sign(v int32) int32 {
 	return bint32(v > 0) - bint32(v < 0)
 }
 
-//Computes absolute value of integer
+// Computes absolute value of integer
 func Abs(v int32) int32 {
 	var mask = v >> uint32(IntBits-1)
 	return (v ^ mask) - mask
@@ -65,48 +64,65 @@ func Min(x int32, y int32) int32 {
 	return y ^ ((x ^ y) & -(bint32(x < y)))
 }
 
-//Computes maximum of integers x and y
+// Computes maximum of integers x and y
 func Max(x int32, y int32) int32 {
 	return x ^ ((x ^ y) & -(bint32(x < y)))
 }
 
-//Checks if a number is a power of two
+// Checks if a number is a power of two
 func IsPow2(v int32) bool {
 	return (v != 0) && ((v & (v - 1)) == 0)
 }
 
-//Computes log base 2 of v
+// Computes log base 2 of v
 func Log2(v uint32) uint32 {
 	var r uint32
 	var shift uint32
 
 	//@formatter:off
-	r = buint32(v > 0xFFFF) << 4;   v >>= r
-	shift = buint32(v > 0xFF) << 3; v >>= shift; r |= shift
-	shift = buint32(v > 0xF)  << 2; v >>= shift; r |= shift
-	shift = buint32(v > 0x3)  << 1; v >>= shift; r |= shift
+	r = buint32(v > 0xFFFF) << 4
+	v >>= r
+	shift = buint32(v > 0xFF) << 3
+	v >>= shift
+	r |= shift
+	shift = buint32(v > 0xF) << 2
+	v >>= shift
+	r |= shift
+	shift = buint32(v > 0x3) << 1
+	v >>= shift
+	r |= shift
 	return r | (v >> 1)
 	//@formatter:on
 }
 
-//Computes log base 10 of v
+// Computes log base 10 of v
 func Log10(v int32) int32 {
 	var r int32
 	//@formatter:off
-	if v >= 1000000000 {r = 9
-	} else if v >= 100000000 {r = 8
-	} else if v >= 10000000 {r = 7
-	} else if v >= 1000000 {r = 6
-	} else if v >= 100000 {r = 5
-	} else if v >= 10000 {r = 4
-	} else if v >= 1000 {r = 3
-	} else if v >= 100 {r = 2
-	} else if v >= 10 {r = 1}
+	if v >= 1000000000 {
+		r = 9
+	} else if v >= 100000000 {
+		r = 8
+	} else if v >= 10000000 {
+		r = 7
+	} else if v >= 1000000 {
+		r = 6
+	} else if v >= 100000 {
+		r = 5
+	} else if v >= 10000 {
+		r = 4
+	} else if v >= 1000 {
+		r = 3
+	} else if v >= 100 {
+		r = 2
+	} else if v >= 10 {
+		r = 1
+	}
 	return r
 	//@formatter:on
 }
 
-//Counts number of bits
+// Counts number of bits
 func PopCount(v uint32) uint32 {
 	//    other solution
 	//    var  v = v - ((v >> 1) & 0x55555555)
@@ -123,22 +139,24 @@ func PopCount(v uint32) uint32 {
 	return ((c >> s4) + c) & b4
 }
 
-//finding the log base 2 in parallel
-//first isolate the lowest 1 bit, and then
+// finding the log base 2 in parallel
+// first isolate the lowest 1 bit, and then
 // proceed with c starting at the maximum and decreasing
-//func count_trailing_zeros(v uint32)  uint32 {
-//    var  c = 32uint32
-//    var sv = v as int32
-//    v = (sv & -sv) as uint32 //NOTE may overflow uint32  -int32
-//    if v != 0 { c -= 1 }
-//    if v & 0x0000FFFF != 0 { c -= 16 }
-//    if v & 0x00FF00FF != 0 { c -= 8 }
-//    if v & 0x0F0F0F0F != 0 { c -= 4 }
-//    if v & 0x33333333 != 0 { c -= 2 }
-//    if v & 0x55555555 != 0 { c -= 1 }
-//    c
-//}
-//Computes the number of trailing zeros by accumulating c
+//
+//	func count_trailing_zeros(v uint32)  uint32 {
+//	   var  c = 32uint32
+//	   var sv = v as int32
+//	   v = (sv & -sv) as uint32 //NOTE may overflow uint32  -int32
+//	   if v != 0 { c -= 1 }
+//	   if v & 0x0000FFFF != 0 { c -= 16 }
+//	   if v & 0x00FF00FF != 0 { c -= 8 }
+//	   if v & 0x0F0F0F0F != 0 { c -= 4 }
+//	   if v & 0x33333333 != 0 { c -= 2 }
+//	   if v & 0x55555555 != 0 { c -= 1 }
+//	   c
+//	}
+//
+// Computes the number of trailing zeros by accumulating c
 // in a manner akin to binary search
 func CountTrailingZeros(v uint32) uint32 {
 	var c uint32 = 32
@@ -172,7 +190,7 @@ func CountTrailingZeros(v uint32) uint32 {
 	return c
 }
 
-//Rounds to next power of 2
+// Rounds to next power of 2
 func NextPow2(v int32) int32 {
 	v += bint32(v == 0)
 	v -= 1
@@ -184,7 +202,7 @@ func NextPow2(v int32) int32 {
 	return v + 1
 }
 
-//Rounds down to previous power of 2
+// Rounds down to previous power of 2
 func PrevPow2(v int32) int32 {
 	v |= v >> 1
 	v |= v >> 2
@@ -194,7 +212,7 @@ func PrevPow2(v int32) int32 {
 	return v - (v >> 1)
 }
 
-//Computes parity of word
+// Computes parity of word
 func Parity(v int32) int32 {
 	v ^= v >> 16
 	v ^= v >> 8
@@ -219,17 +237,17 @@ func Parity(v int32) int32 {
 //  }
 //}
 
-//Reverse bits in a 32 bit word
+// Reverse bits in a 32 bit word
 func Reverse(v uint32) uint32 {
 	//@formatter:off
-	return (ReverseTable[usz(v & 0xff)] << 24) |
-		(ReverseTable[usz((v>>8)&0xff) ] << 16) |
-		(ReverseTable[usz((v>>16)&0xff) ] << 8) |
-		ReverseTable[usz((v>>24)&0xff) ]
+	return (ReverseTable[usz(v&0xff)] << 24) |
+		(ReverseTable[usz((v>>8)&0xff)] << 16) |
+		(ReverseTable[usz((v>>16)&0xff)] << 8) |
+		ReverseTable[usz((v>>24)&0xff)]
 	//@formatter:on
 }
 
-//Interleave bits of 2 coordinates with 16
+// Interleave bits of 2 coordinates with 16
 // Useful for fast quadtree codes
 func Interleave2(x uint32, y uint32) uint32 {
 	x &= 0xFFFF
@@ -247,7 +265,7 @@ func Interleave2(x uint32, y uint32) uint32 {
 	return x | (y << 1)
 }
 
-//Extracts the nth interleaved component
+// Extracts the nth interleaved component
 func Deinterleave2(v uint32, n uint32) uint32 {
 	//@formatter:off
 	v = (v >> n) & 0x55555555
@@ -259,7 +277,7 @@ func Deinterleave2(v uint32, n uint32) uint32 {
 	//@formatter:on
 }
 
-//Interleave bits of 3 coordinates, each with 10
+// Interleave bits of 3 coordinates, each with 10
 // Useful for fast octree codes
 func Interleave3(x uint32, y uint32, z uint32) uint32 {
 	x &= 0x3FF
@@ -284,7 +302,7 @@ func Interleave3(x uint32, y uint32, z uint32) uint32 {
 	return x | (z << 2)
 }
 
-//Extracts nth interleaved component of a 3-tuple
+// Extracts nth interleaved component of a 3-tuple
 func Deinterleave3(v uint32, n uint32) uint32 {
 	v = (v >> n) & 1227133513
 	v = (v | (v >> 2)) & 3272356035
@@ -294,10 +312,10 @@ func Deinterleave3(v uint32, n uint32) uint32 {
 	return (v << 22) >> 22
 }
 
-//Computes next combination in colexicographic order (this is mistakenly called
+// Computes next combination in colexicographic order (this is mistakenly called
 // nextPermutation on the bit twiddling hacks page)
 func NextCombination(v uint32) uint32 {
 	var t = v | (v - 1)
-	var c = uint32(not(int32(t)) & -not(int32(t))) - 1
+	var c = uint32(not(int32(t))&-not(int32(t))) - 1
 	return (t + 1) | (c >> (CountTrailingZeros(v) + 1))
 }
